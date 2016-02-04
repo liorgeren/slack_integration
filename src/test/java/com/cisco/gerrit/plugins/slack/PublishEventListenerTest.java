@@ -25,19 +25,19 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class EventListenerTest
+public class PublishEventListenerTest
 {
     private PatchSetCreatedEvent mockPatchSetCreatedEvent =
             mock(PatchSetCreatedEvent.class);
     private ChangeMergedEvent mocChangeMergedEvent =
             mock(ChangeMergedEvent.class);
 
-    private EventListener eventListener;
+    private PublishEventListener publishEventListener;
 
     @Before
     public void setup() throws Exception
     {
-        eventListener = new EventListener();
+        publishEventListener = new PublishEventListener();
     }
 
     @Test
