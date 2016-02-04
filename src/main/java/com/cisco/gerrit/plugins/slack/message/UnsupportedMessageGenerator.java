@@ -18,11 +18,11 @@
 package com.cisco.gerrit.plugins.slack.message;
 
 import com.cisco.gerrit.plugins.slack.config.ProjectConfig;
-import com.google.gerrit.server.events.ChangeEvent;
+import com.google.gerrit.server.events.Event;
 
 /**
  * A specific MessageGenerator implementation that can generate a message for
- * an unsupported ChangeEvent. The default behavior for this MessageGenerator
+ * an unsupported Event. The default behavior for this MessageGenerator
  * is to flag that it should not be published.
  *
  * @author Matthew Montgomery
@@ -30,9 +30,9 @@ import com.google.gerrit.server.events.ChangeEvent;
 public class UnsupportedMessageGenerator extends MessageGenerator
 {
     private ProjectConfig config;
-    private ChangeEvent event;
+    private Event event;
 
-    protected UnsupportedMessageGenerator(ChangeEvent event,
+    protected UnsupportedMessageGenerator(Event event,
             ProjectConfig config)
     {
         if (event == null)
@@ -56,7 +56,7 @@ public class UnsupportedMessageGenerator extends MessageGenerator
         StringBuilder message;
         message = new StringBuilder();
 
-        message.append("Unsupported change event: ");
+        message.append("Unsupported event: ");
         message.append(this.event.toString());
 
         return message.toString();
