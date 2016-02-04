@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
  */
 @Listen
 @Singleton
-public class EventListener implements ChangeListener
+public class PublishEventListener implements ChangeListener
 {
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(EventListener.class);
+            LoggerFactory.getLogger(PublishEventListener.class);
 
     private static final String ALL_PROJECTS = "All-Projects";
 
