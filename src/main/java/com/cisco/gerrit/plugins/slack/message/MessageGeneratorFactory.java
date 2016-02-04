@@ -18,8 +18,8 @@
 package com.cisco.gerrit.plugins.slack.message;
 
 import com.cisco.gerrit.plugins.slack.config.ProjectConfig;
-import com.google.gerrit.server.events.ChangeEvent;
 import com.google.gerrit.server.events.ChangeMergedEvent;
+import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
 
 /**
@@ -71,13 +71,13 @@ public class MessageGeneratorFactory
     /**
      * Creates a new MessageGenerator for unsupported events.
      *
-     * @param event A ChangeEvent instance
+     * @param event An Event instance
      * @param config A ProjectConfig instance for the given event
      *
      * @return A MessageGenerator instance capable of generating a message for
-     * an unsupported ChangeEvent.
+     * an unsupported Event.
      */
-    public static MessageGenerator newInstance(ChangeEvent event,
+    public static MessageGenerator newInstance(Event event,
             ProjectConfig config)
     {
         UnsupportedMessageGenerator messageGenerator;

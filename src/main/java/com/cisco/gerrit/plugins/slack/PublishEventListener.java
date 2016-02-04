@@ -21,11 +21,11 @@ import com.cisco.gerrit.plugins.slack.client.WebhookClient;
 import com.cisco.gerrit.plugins.slack.config.ProjectConfig;
 import com.cisco.gerrit.plugins.slack.message.MessageGenerator;
 import com.cisco.gerrit.plugins.slack.message.MessageGeneratorFactory;
-import com.google.gerrit.common.ChangeListener;
+import com.google.gerrit.common.EventListener;
 import com.google.gerrit.extensions.annotations.Listen;
 import com.google.gerrit.server.config.PluginConfigFactory;
-import com.google.gerrit.server.events.ChangeEvent;
 import com.google.gerrit.server.events.ChangeMergedEvent;
+import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
  */
 @Listen
 @Singleton
-public class EventListener implements ChangeListener
+public class PublishEventListener implements EventListener
 {
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(EventListener.class);
+            LoggerFactory.getLogger(PublishEventListener.class);
 
     private static final String ALL_PROJECTS = "All-Projects";
 
@@ -48,7 +48,7 @@ public class EventListener implements ChangeListener
     private PluginConfigFactory configFactory;
 
     @Override
-    public void onChangeEvent(ChangeEvent event)
+    public void onEvent(Event event)
     {
         try
         {
