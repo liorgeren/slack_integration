@@ -25,14 +25,14 @@
     <groupId>com.cisco.gerrit.plugins</groupId>
     <artifactId>slack-integration</artifactId>
     <packaging>jar</packaging>
-    <version>2.9</version>
+    <version>2.9.3</version>
     <name>Slack Integration Plugin</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <gerrit-api-type>plugin</gerrit-api-type>
-        <gerrit-api-version>2.9</gerrit-api-version>
+        <gerrit-api-version>${project.version}</gerrit-api-version>
     </properties>
 
     <build>
