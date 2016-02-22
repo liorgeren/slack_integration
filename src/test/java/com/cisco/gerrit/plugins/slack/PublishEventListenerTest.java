@@ -29,7 +29,7 @@ public class PublishEventListenerTest
 {
     private PatchSetCreatedEvent mockPatchSetCreatedEvent =
             mock(PatchSetCreatedEvent.class);
-    private ChangeMergedEvent mocChangeMergedEvent =
+    private ChangeMergedEvent mockChangeMergedEvent =
             mock(ChangeMergedEvent.class);
 
     private PublishEventListener publishEventListener;
