@@ -19,36 +19,36 @@ package com.cisco.gerrit.plugins.slack.message;
 
 import com.cisco.gerrit.plugins.slack.config.ProjectConfig;
 import com.cisco.gerrit.plugins.slack.util.ResourceHelper;
-import com.google.gerrit.server.events.PatchSetCreatedEvent;
+import com.google.common.base.Ascii;
+import com.google.gerrit.server.events.CommentAddedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
- * A specific MessageGenerator implementation that can generate a message for a
- * patchset created event.
+ * A specific MessageGenerator implementation that can generate a message for
+ * a commend added event.
  *
- * @author Matthew Montgomery
+ * @author Kenneth Pedersen
  */
-public class PatchSetCreatedMessageGenerator extends MessageGenerator
+public class CommentAddedMessageGenerator extends MessageGenerator
 {
+    /**
+     * The class logger instance.
+     */
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(PatchSetCreatedMessageGenerator.class);
+            LoggerFactory.getLogger(CommentAddedMessageGenerator.class);
 
-    private PatchSetCreatedEvent event;
     private ProjectConfig config;
+    private CommentAddedEvent event;
 
     /**
-     * Creates a new PatchSetCreatedMessageGenerator instance using the
-     * provided PatchSetCreatedEvent instance.
+     * Creates a new CommentAddedMessageGenerator instance using the provided
+     * CommentAddedEvent instance.
      *
-     * @param event The PatchSetCreatedEvent instance to generate a
-     *              message for.
+     * @param event The CommentAddedEvent instance to generate a message for.
      */
-    protected PatchSetCreatedMessageGenerator(PatchSetCreatedEvent event,
-            ProjectConfig config)
+    protected CommentAddedMessageGenerator(CommentAddedEvent event,
+                                           ProjectConfig config)
     {
         if (event == null)
         {
@@ -62,28 +62,7 @@ public class PatchSetCreatedMessageGenerator extends MessageGenerator
     @Override
     public boolean shouldPublish()
     {
-        if(!config.isEnabled()) return false;
-
-        boolean result;
-        result = true;
-
-        try
-        {
-            Pattern pattern;
-            pattern = Pattern.compile(config.getIgnore(), Pattern.DOTALL);
-
-            Matcher matcher;
-            matcher = pattern.matcher(event.change.commitMessage);
-
-            // If the ignore pattern matches, publishing should not happen
-            result = !matcher.matches();
-        }
-        catch (Exception e)
-        {
-            LOGGER.warn("The specified ignore pattern was invalid", e);
-        }
-
-        return result;
+        return config.isEnabled();
     }
 
     @Override
@@ -101,13 +80,13 @@ public class PatchSetCreatedMessageGenerator extends MessageGenerator
             StringBuilder text;
             text = new StringBuilder();
 
-            text.append(escape(event.uploader.name));
-            text.append(" proposed\\n>>>");
+            text.append(escape(event.author.name));
+            text.append(" commented\\n>>>");
             text.append(escape(event.change.project));
             text.append(" (");
             text.append(escape(event.change.branch));
             text.append("): ");
-            text.append(escape(event.change.commitMessage.split("\n")[0]));
+            text.append(escape(Ascii.truncate(event.comment, 200, "...")));
             text.append(" (");
             text.append(escape(event.change.url));
             text.append(")");

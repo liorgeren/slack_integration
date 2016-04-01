@@ -20,6 +20,7 @@ package com.cisco.gerrit.plugins.slack.message;
 import com.cisco.gerrit.plugins.slack.config.ProjectConfig;
 import com.google.gerrit.server.events.ChangeEvent;
 import com.google.gerrit.server.events.ChangeMergedEvent;
+import com.google.gerrit.server.events.CommentAddedEvent;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
 
 /**
@@ -67,6 +68,25 @@ public class MessageGeneratorFactory
 
         return messageGenerator;
     }
+
+    /**
+     * Creates a new MessageGenerator for comment added events.
+     *
+     * @param event A CommendAddedEvent instance
+     * @param config A ProjectConfig instance for the given event
+     *
+     * @return A MessageGenerator instance capable of generating a message for
+     * a CommendAddedEvent.
+     */
+    public static MessageGenerator newInstance(CommentAddedEvent event,
+                                               ProjectConfig config)
+    {
+        CommentAddedMessageGenerator messageGenerator;
+        messageGenerator = new CommentAddedMessageGenerator(event, config);
+
+        return messageGenerator;
+    }
+
 
     /**
      * Creates a new MessageGenerator for unsupported events.

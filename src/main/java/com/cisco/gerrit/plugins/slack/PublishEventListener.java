@@ -26,6 +26,7 @@ import com.google.gerrit.extensions.annotations.Listen;
 import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gerrit.server.events.ChangeEvent;
 import com.google.gerrit.server.events.ChangeMergedEvent;
+import com.google.gerrit.server.events.CommentAddedEvent;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -76,6 +77,17 @@ public class PublishEventListener implements ChangeListener
 
                 messageGenerator = MessageGeneratorFactory.newInstance(
                         changeMergedEvent, config);
+            }
+            else if (event instanceof CommentAddedEvent)
+            {
+                CommentAddedEvent commentAddedEvent;
+                commentAddedEvent = (CommentAddedEvent) event;
+
+                config = new ProjectConfig(configFactory,
+                        commentAddedEvent.change.project);
+
+                messageGenerator = MessageGeneratorFactory.newInstance(
+                        commentAddedEvent, config);
             }
             else
             {
