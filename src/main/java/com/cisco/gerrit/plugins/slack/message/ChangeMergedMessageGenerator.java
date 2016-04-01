@@ -61,7 +61,7 @@ public class ChangeMergedMessageGenerator extends MessageGenerator
     @Override
     public boolean shouldPublish()
     {
-        return true;
+        return config.isEnabled();
     }
 
     @Override
@@ -95,7 +95,7 @@ public class ChangeMergedMessageGenerator extends MessageGenerator
         }
         catch (Exception e)
         {
-            LOGGER.error("Error generating message: " + e.getMessage());
+            LOGGER.error("Error generating message: " + e.getMessage(), e);
         }
 
         return message;
