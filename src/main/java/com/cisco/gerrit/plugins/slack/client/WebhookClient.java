@@ -110,7 +110,7 @@ public class WebhookClient
                 DataOutputStream request;
                 request = new DataOutputStream(connection.getOutputStream());
 
-                request.writeBytes(message);
+                request.write(message.getBytes("UTF-8"));
                 request.flush();
                 request.close();
             }
