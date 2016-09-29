@@ -73,7 +73,7 @@ public class PatchSetCreatedMessageGenerator extends MessageGenerator
             pattern = Pattern.compile(config.getIgnore(), Pattern.DOTALL);
 
             Matcher matcher;
-            matcher = pattern.matcher(event.change.commitMessage);
+            matcher = pattern.matcher(event.change.get().commitMessage);
 
             // If the ignore pattern matches, publishing should not happen
             result = !matcher.matches();
@@ -101,15 +101,15 @@ public class PatchSetCreatedMessageGenerator extends MessageGenerator
             StringBuilder text;
             text = new StringBuilder();
 
-            text.append(escape(event.uploader.name));
+            text.append(escape(event.uploader.get().name));
             text.append(" proposed\\n>>>");
-            text.append(escape(event.change.project));
+            text.append(escape(event.change.get().project));
             text.append(" (");
-            text.append(escape(event.change.branch));
+            text.append(escape(event.change.get().branch));
             text.append("): ");
-            text.append(escape(event.change.commitMessage.split("\n")[0]));
+            text.append(escape(event.change.get().commitMessage.split("\n")[0]));
             text.append(" (");
-            text.append(escape(event.change.url));
+            text.append(escape(event.change.get().url));
             text.append(")");
 
             message = String.format(template, text, config.getChannel(),

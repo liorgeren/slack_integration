@@ -80,15 +80,15 @@ public class CommentAddedMessageGenerator extends MessageGenerator
             StringBuilder text;
             text = new StringBuilder();
 
-            text.append(escape(event.author.name));
+            text.append(escape(event.author.get().name));
             text.append(" commented\\n>>>");
-            text.append(escape(event.change.project));
+            text.append(escape(event.change.get().project));
             text.append(" (");
-            text.append(escape(event.change.branch));
+            text.append(escape(event.change.get().branch));
             text.append("): ");
             text.append(escape(Ascii.truncate(event.comment, 200, "...")));
             text.append(" (");
-            text.append(escape(event.change.url));
+            text.append(escape(event.change.get().url));
             text.append(")");
 
             message = String.format(template, text, config.getChannel(),

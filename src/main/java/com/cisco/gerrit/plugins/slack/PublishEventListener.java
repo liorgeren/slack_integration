@@ -62,7 +62,7 @@ public class PublishEventListener implements EventListener
                 patchSetCreatedEvent = (PatchSetCreatedEvent) event;
 
                 config = new ProjectConfig(configFactory,
-                        patchSetCreatedEvent.change.project);
+                        patchSetCreatedEvent.change.get().project);
 
                 messageGenerator = MessageGeneratorFactory.newInstance(
                         patchSetCreatedEvent, config);
@@ -73,7 +73,7 @@ public class PublishEventListener implements EventListener
                 changeMergedEvent = (ChangeMergedEvent) event;
 
                 config = new ProjectConfig(configFactory,
-                        changeMergedEvent.change.project);
+                        changeMergedEvent.change.get().project);
 
                 messageGenerator = MessageGeneratorFactory.newInstance(
                         changeMergedEvent, config);
@@ -84,7 +84,7 @@ public class PublishEventListener implements EventListener
                 commentAddedEvent = (CommentAddedEvent) event;
 
                 config = new ProjectConfig(configFactory,
-                        commentAddedEvent.change.project);
+                        commentAddedEvent.change.get().project);
 
                 messageGenerator = MessageGeneratorFactory.newInstance(
                         commentAddedEvent, config);

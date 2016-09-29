@@ -79,15 +79,15 @@ public class ChangeMergedMessageGenerator extends MessageGenerator
             StringBuilder text;
             text = new StringBuilder();
 
-            text.append(escape(event.submitter.name));
+            text.append(escape(event.submitter.get().name));
             text.append(" merged\\n>>>");
-            text.append(escape(event.change.project));
+            text.append(escape(event.change.get().project));
             text.append(" (");
-            text.append(escape(event.change.branch));
+            text.append(escape(event.change.get().branch));
             text.append("): ");
-            text.append(escape(event.change.commitMessage.split("\n")[0]));
+            text.append(escape(event.change.get().commitMessage.split("\n")[0]));
             text.append(" (");
-            text.append(escape(event.change.url));
+            text.append(escape(event.change.get().url));
             text.append(")");
 
             message = String.format(template, text, config.getChannel(),

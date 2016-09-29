@@ -18,6 +18,7 @@
 package com.cisco.gerrit.plugins.slack.message;
 
 import com.cisco.gerrit.plugins.slack.config.ProjectConfig;
+import com.google.common.base.Suppliers;
 import com.google.gerrit.reviewdb.client.Project;
 import com.google.gerrit.server.config.PluginConfig;
 import com.google.gerrit.server.config.PluginConfigFactory;
@@ -104,7 +105,7 @@ public class PatchSetCreatedMessageGeneratorTest
     public void publishesWhenExpected() throws Exception
     {
         // Setup mocks
-        mockEvent.change = mockChange;
+        mockEvent.change = Suppliers.ofInstance(mockChange);
         mockChange.commitMessage = "This is a title\nAnd a the body.";
 
         // Test
@@ -119,7 +120,7 @@ public class PatchSetCreatedMessageGeneratorTest
     public void doesNotPublishWhenExpected() throws Exception
     {
         // Setup mocks
-        mockEvent.change = mockChange;
+        mockEvent.change = Suppliers.ofInstance(mockChange);
         mockChange.commitMessage = "WIP-This is a title\nAnd a the body.";
 
         // Test
@@ -148,8 +149,8 @@ public class PatchSetCreatedMessageGeneratorTest
     public void generatesExpectedMessage() throws Exception
     {
         // Setup mocks
-        mockEvent.change = mockChange;
-        mockEvent.uploader = mockAccount;
+        mockEvent.change = Suppliers.ofInstance(mockChange);
+        mockEvent.uploader = Suppliers.ofInstance(mockAccount);
 
         mockChange.project = "testproject";
         mockChange.branch = "master";
