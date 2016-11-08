@@ -63,14 +63,15 @@ public class CommentAddedMessageGeneratorTest
     private ChangeAttribute mockChange = mock(ChangeAttribute.class);
     private AccountAttribute mockOwner = mock(AccountAttribute.class);
 
-    private ProjectConfig config;
-
     @Before
     public void setup() throws Exception
     {
         PowerMockito.mockStatic(Project.NameKey.class);
         when(Project.NameKey.parse(PROJECT_NAME)).thenReturn(mockNameKey);
+    }
 
+    private ProjectConfig getConfig(boolean publishOnCommentAdded) throws Exception
+    {
         Project.NameKey projectNameKey;
         projectNameKey = Project.NameKey.parse(PROJECT_NAME);
 
@@ -89,13 +90,21 @@ public class CommentAddedMessageGeneratorTest
                 .thenReturn("testuser");
         when(mockPluginConfig.getString("ignore", ""))
                 .thenReturn("^WIP.*");
+        when(mockPluginConfig.getBoolean("publish-on-comment-added", true))
+                .thenReturn(publishOnCommentAdded);
 
-        config = new ProjectConfig(mockConfigFactory, PROJECT_NAME);
+        return new ProjectConfig(mockConfigFactory, PROJECT_NAME);
+    }
+
+    private ProjectConfig getConfig() throws Exception
+    {
+        return getConfig(true /* publishOnCommentAdded */);
     }
 
     @Test
     public void factoryCreatesExpectedType() throws Exception
     {
+        ProjectConfig config = getConfig();
         MessageGenerator messageGenerator;
         messageGenerator = MessageGeneratorFactory.newInstance(
                 mockEvent, config);
@@ -108,6 +117,7 @@ public class CommentAddedMessageGeneratorTest
     public void publishesWhenExpected() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.comment = "This is a title\nAnd a the body.";
 
         // Test
@@ -119,9 +129,10 @@ public class CommentAddedMessageGeneratorTest
     }
 
     @Test
-    public void doesNotPublishWhenExpected() throws Exception
+    public void publishesWhenMessageMatchesIgnore() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.comment = "WIP:This is a title\nAnd a the body.";
 
         // Test
@@ -133,8 +144,24 @@ public class CommentAddedMessageGeneratorTest
     }
 
     @Test
+    public void doesNotPublishWhenTurnedOff() throws Exception
+    {
+        // Setup mocks
+        ProjectConfig config = getConfig(false /* publishOnCommentAdded */);
+        mockEvent.comment = "This is a title\nAnd a the body.";
+
+        // Test
+        MessageGenerator messageGenerator;
+        messageGenerator = MessageGeneratorFactory.newInstance(
+                mockEvent, config);
+
+        assertThat(messageGenerator.shouldPublish(), is(false));
+    }
+
+    @Test
     public void handlesInvalidIgnorePatterns() throws Exception
     {
+        ProjectConfig config = getConfig();
         when(mockPluginConfig.getString("ignore", ""))
                 .thenReturn(null);
 
@@ -150,6 +177,7 @@ public class CommentAddedMessageGeneratorTest
     public void generatesExpectedMessage() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.change = Suppliers.ofInstance(mockChange);
         mockEvent.author = Suppliers.ofInstance(mockAccount);
 
@@ -184,6 +212,7 @@ public class CommentAddedMessageGeneratorTest
     public void generatesExpectedMessageForLongComment() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.change = Suppliers.ofInstance(mockChange);
         mockEvent.author = Suppliers.ofInstance(mockAccount);
 

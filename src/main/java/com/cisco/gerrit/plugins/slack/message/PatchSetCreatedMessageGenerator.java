@@ -62,7 +62,10 @@ public class PatchSetCreatedMessageGenerator extends MessageGenerator
     @Override
     public boolean shouldPublish()
     {
-        if(!config.isEnabled()) return false;
+        if (!config.isEnabled() || !config.shouldPublishOnPatchSetCreated())
+        {
+            return false;
+        }
 
         boolean result;
         result = true;

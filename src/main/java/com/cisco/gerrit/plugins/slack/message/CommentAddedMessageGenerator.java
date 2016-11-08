@@ -62,7 +62,7 @@ public class CommentAddedMessageGenerator extends MessageGenerator
     @Override
     public boolean shouldPublish()
     {
-        return config.isEnabled();
+        return config.isEnabled() && config.shouldPublishOnCommentAdded();
     }
 
     @Override

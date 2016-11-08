@@ -47,6 +47,9 @@ public class ProjectConfig
     private String channel;
     private String username;
     private String ignore;
+    private boolean publishOnPatchSetCreated;
+    private boolean publishOnChangeMerged;
+    private boolean publishOnCommentAdded;
 
     /**
      * Creates a new instance of the ProjectConfig class for the given project.
@@ -82,6 +85,21 @@ public class ProjectConfig
             ignore = configFactory.getFromProjectConfigWithInheritance(
                     projectNameKey, CONFIG_NAME).getString(
                     "ignore", "");
+
+            publishOnPatchSetCreated =
+                configFactory.getFromProjectConfigWithInheritance(
+                    projectNameKey, CONFIG_NAME).getBoolean(
+                    "publish-on-patch-set-created", true);
+
+            publishOnChangeMerged =
+                configFactory.getFromProjectConfigWithInheritance(
+                    projectNameKey, CONFIG_NAME).getBoolean(
+                    "publish-on-change-merged", true);
+
+            publishOnCommentAdded =
+                configFactory.getFromProjectConfigWithInheritance(
+                    projectNameKey, CONFIG_NAME).getBoolean(
+                    "publish-on-comment-added", true);
         }
         catch (NoSuchProjectException e)
         {
@@ -113,5 +131,20 @@ public class ProjectConfig
     public String getIgnore()
     {
         return ignore;
+    }
+
+    public boolean shouldPublishOnPatchSetCreated()
+    {
+        return publishOnPatchSetCreated;
+    }
+
+    public boolean shouldPublishOnChangeMerged()
+    {
+        return publishOnChangeMerged;
+    }
+
+    public boolean shouldPublishOnCommentAdded()
+    {
+        return publishOnCommentAdded;
     }
 }

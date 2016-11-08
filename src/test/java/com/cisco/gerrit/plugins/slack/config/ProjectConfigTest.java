@@ -78,6 +78,12 @@ public class ProjectConfigTest
                 .thenReturn("test-user");
         when(mockPluginConfig.getString("ignore", ""))
                 .thenReturn("^WIP.*");
+        when(mockPluginConfig.getBoolean("publish-on-patch-set-created", true))
+                .thenReturn(true);
+        when(mockPluginConfig.getBoolean("publish-on-change-merged", true))
+                .thenReturn(true);
+        when(mockPluginConfig.getBoolean("publish-on-comment-added", true))
+                .thenReturn(true);
 
         config = new ProjectConfig(mockConfigFactory, PROJECT_NAME);
     }
@@ -104,5 +110,23 @@ public class ProjectConfigTest
     public void testGetUsername() throws Exception
     {
         assertThat(config.getUsername(), is(equalTo("test-user")));
+    }
+
+    @Test
+    public void testShouldPublishOnPatchSetCreated() throws Exception
+    {
+        assertThat(config.shouldPublishOnPatchSetCreated(), is(equalTo(true)));
+    }
+
+    @Test
+    public void testShouldPublishOnChangeMerged() throws Exception
+    {
+        assertThat(config.shouldPublishOnChangeMerged(), is(equalTo(true)));
+    }
+
+    @Test
+    public void testShouldPublishOnCommentAdded() throws Exception
+    {
+        assertThat(config.shouldPublishOnCommentAdded(), is(equalTo(true)));
     }
 }

@@ -60,14 +60,18 @@ public class PatchSetCreatedMessageGeneratorTest
     private AccountAttribute mockAccount = mock(AccountAttribute.class);
     private ChangeAttribute mockChange = mock(ChangeAttribute.class);
 
-    private ProjectConfig config;
-
     @Before
     public void setup() throws Exception
     {
         PowerMockito.mockStatic(Project.NameKey.class);
         when(Project.NameKey.parse(PROJECT_NAME)).thenReturn(mockNameKey);
+    }
 
+    private ProjectConfig getConfig(
+        String ignore,
+        boolean publishOnPatchSetCreated)
+        throws Exception
+    {
         Project.NameKey projectNameKey;
         projectNameKey = Project.NameKey.parse(PROJECT_NAME);
 
@@ -85,14 +89,32 @@ public class PatchSetCreatedMessageGeneratorTest
         when(mockPluginConfig.getString("username", "gerrit"))
                 .thenReturn("testuser");
         when(mockPluginConfig.getString("ignore", ""))
-                .thenReturn("^WIP.*");
+                .thenReturn(ignore);
+        when(mockPluginConfig.getBoolean("publish-on-patch-set-created", true))
+                .thenReturn(publishOnPatchSetCreated);
 
-        config = new ProjectConfig(mockConfigFactory, PROJECT_NAME);
+        return new ProjectConfig(mockConfigFactory, PROJECT_NAME);
+    }
+
+    private ProjectConfig getConfig(String ignore) throws Exception
+    {
+        return getConfig(ignore, true /* publishOnPatchSetCreated */);
+    }
+
+    private ProjectConfig getConfig(boolean publishOnPatchSetCreated) throws Exception
+    {
+        return getConfig("^WIP.*", publishOnPatchSetCreated);
+    }
+
+    private ProjectConfig getConfig() throws Exception
+    {
+        return getConfig("^WIP.*", true /* publishOnPatchSetCreated */);
     }
 
     @Test
     public void factoryCreatesExpectedType() throws Exception
     {
+        ProjectConfig config = getConfig();
         MessageGenerator messageGenerator;
         messageGenerator = MessageGeneratorFactory.newInstance(
                 mockEvent, config);
@@ -105,6 +127,7 @@ public class PatchSetCreatedMessageGeneratorTest
     public void publishesWhenExpected() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.change = Suppliers.ofInstance(mockChange);
         mockChange.commitMessage = "This is a title\nAnd a the body.";
 
@@ -117,9 +140,10 @@ public class PatchSetCreatedMessageGeneratorTest
     }
 
     @Test
-    public void doesNotPublishWhenExpected() throws Exception
+    public void doesNotPublishWhenMessageMatchesIgnore() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.change = Suppliers.ofInstance(mockChange);
         mockChange.commitMessage = "WIP-This is a title\nAnd a the body.";
 
@@ -132,10 +156,25 @@ public class PatchSetCreatedMessageGeneratorTest
     }
 
     @Test
+    public void doesNotPublishWhenTurnedOff() throws Exception
+    {
+        // Setup mocks
+        ProjectConfig config = getConfig(false /* publishOnPatchSetCreated */);
+        mockEvent.change = Suppliers.ofInstance(mockChange);
+        mockChange.commitMessage = "This is a title\nAnd a the body.";
+
+        // Test
+        MessageGenerator messageGenerator;
+        messageGenerator = MessageGeneratorFactory.newInstance(
+                mockEvent, config);
+
+        assertThat(messageGenerator.shouldPublish(), is(false));
+    }
+
+    @Test
     public void handlesInvalidIgnorePatterns() throws Exception
     {
-        when(mockPluginConfig.getString("ignore", ""))
-                .thenReturn(null);
+        ProjectConfig config = getConfig(null /* ignore */);
 
         // Test
         MessageGenerator messageGenerator;
@@ -149,6 +188,7 @@ public class PatchSetCreatedMessageGeneratorTest
     public void generatesExpectedMessage() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.change = Suppliers.ofInstance(mockChange);
         mockEvent.uploader = Suppliers.ofInstance(mockAccount);
 

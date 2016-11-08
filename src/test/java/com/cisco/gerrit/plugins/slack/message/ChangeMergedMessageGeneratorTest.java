@@ -62,14 +62,15 @@ public class ChangeMergedMessageGeneratorTest
     private AccountAttribute mockAccount = mock(AccountAttribute.class);
     private ChangeAttribute mockChange = mock(ChangeAttribute.class);
 
-    private ProjectConfig config;
-
     @Before
     public void setup() throws Exception
     {
         PowerMockito.mockStatic(Project.NameKey.class);
         when(Project.NameKey.parse(PROJECT_NAME)).thenReturn(mockNameKey);
+    }
 
+    private ProjectConfig getConfig(boolean publishOnChangeMerged) throws Exception
+    {
         Project.NameKey projectNameKey;
         projectNameKey = Project.NameKey.parse(PROJECT_NAME);
 
@@ -88,13 +89,20 @@ public class ChangeMergedMessageGeneratorTest
                 .thenReturn("testuser");
         when(mockPluginConfig.getString("ignore", ""))
                 .thenReturn("^WIP.*");
+        when(mockPluginConfig.getBoolean("publish-on-change-merged", true))
+                .thenReturn(publishOnChangeMerged);
 
-        config = new ProjectConfig(mockConfigFactory, PROJECT_NAME);
+        return new ProjectConfig(mockConfigFactory, PROJECT_NAME);
+    }
+
+    private ProjectConfig getConfig() throws Exception {
+        return getConfig(true /* publishOnChangeMerged */);
     }
 
     @Test
     public void factoryCreatesExpectedType() throws Exception
     {
+        ProjectConfig config = getConfig();
         MessageGenerator messageGenerator;
         messageGenerator = MessageGeneratorFactory.newInstance(
                 mockEvent, config);
@@ -107,6 +115,7 @@ public class ChangeMergedMessageGeneratorTest
     public void publishesWhenExpected() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.change = Suppliers.ofInstance(mockChange);
         mockChange.commitMessage = "This is a title\nAnd a the body.";
 
@@ -119,9 +128,10 @@ public class ChangeMergedMessageGeneratorTest
     }
 
     @Test
-    public void doesNotPublishWhenExpected() throws Exception
+    public void publishesWhenMessageMatchesIgnore() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.change = Suppliers.ofInstance(mockChange);
         mockChange.commitMessage = "WIP:This is a title\nAnd a the body.";
 
@@ -134,8 +144,25 @@ public class ChangeMergedMessageGeneratorTest
     }
 
     @Test
+    public void doesNotPublishWhenTurnedOff() throws Exception
+    {
+        // Setup mocks
+        ProjectConfig config = getConfig(false /* publishOnChangeMerged */);
+        mockEvent.change = Suppliers.ofInstance(mockChange);
+        mockChange.commitMessage = "This is a title\nAnd a the body.";
+
+        // Test
+        MessageGenerator messageGenerator;
+        messageGenerator = MessageGeneratorFactory.newInstance(
+                mockEvent, config);
+
+        assertThat(messageGenerator.shouldPublish(), is(false));
+    }
+
+    @Test
     public void handlesInvalidIgnorePatterns() throws Exception
     {
+        ProjectConfig config = getConfig();
         when(mockPluginConfig.getString("ignore", ""))
                 .thenReturn(null);
 
@@ -151,6 +178,7 @@ public class ChangeMergedMessageGeneratorTest
     public void generatesExpectedMessage() throws Exception
     {
         // Setup mocks
+        ProjectConfig config = getConfig();
         mockEvent.change = Suppliers.ofInstance(mockChange);
         mockEvent.submitter = Suppliers.ofInstance(mockAccount);
 
