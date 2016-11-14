@@ -22,6 +22,7 @@ import com.google.gerrit.server.events.ChangeMergedEvent;
 import com.google.gerrit.server.events.CommentAddedEvent;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
+import com.google.gerrit.server.events.ReviewerAddedEvent;
 
 /**
  * Factory used to create event specific MessageGenerator instances.
@@ -72,11 +73,11 @@ public class MessageGeneratorFactory
     /**
      * Creates a new MessageGenerator for comment added events.
      *
-     * @param event A CommendAddedEvent instance
+     * @param event A CommentAddedEvent instance
      * @param config A ProjectConfig instance for the given event
      *
      * @return A MessageGenerator instance capable of generating a message for
-     * a CommendAddedEvent.
+     * a CommentAddedEvent.
      */
     public static MessageGenerator newInstance(CommentAddedEvent event,
                                                ProjectConfig config)
@@ -87,6 +88,23 @@ public class MessageGeneratorFactory
         return messageGenerator;
     }
 
+    /**
+     * Creates a new MessageGenerator for reviewer added events.
+     *
+     * @param event A ReviewerAddedEvent instance
+     * @param config A ProjectConfig instance for the given event
+     *
+     * @return A MessageGenerator instance capable of generating a message for
+     * a ReviewerAddedEvent.
+     */
+    public static MessageGenerator newInstance(ReviewerAddedEvent event,
+                                               ProjectConfig config)
+    {
+        ReviewerAddedMessageGenerator messageGenerator;
+        messageGenerator = new ReviewerAddedMessageGenerator(event, config);
+
+        return messageGenerator;
+    }
 
     /**
      * Creates a new MessageGenerator for unsupported events.

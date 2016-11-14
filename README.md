@@ -112,3 +112,6 @@ The following configuration options are available
     publish-on-comment-added - boolean (true/false)
         Whether a Slack notification should be published when a comment is
         added to a review.
+    publish-on-reviewer-added - boolean (true/false)
+        Whether a Slack notification should be published when a reviewer is
+        added to a review.

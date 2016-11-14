@@ -20,35 +20,35 @@ package com.cisco.gerrit.plugins.slack.message;
 import com.cisco.gerrit.plugins.slack.config.ProjectConfig;
 import com.cisco.gerrit.plugins.slack.util.ResourceHelper;
 import com.google.common.base.Ascii;
-import com.google.gerrit.server.events.CommentAddedEvent;
+import com.google.gerrit.server.events.ReviewerAddedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A specific MessageGenerator implementation that can generate a message for
- * a comment added event.
+ * a reviewer added event.
  *
- * @author Kenneth Pedersen
+ * @author Nathan Wall
  */
-public class CommentAddedMessageGenerator extends MessageGenerator
+public class ReviewerAddedMessageGenerator extends MessageGenerator
 {
     /**
      * The class logger instance.
      */
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(CommentAddedMessageGenerator.class);
+            LoggerFactory.getLogger(ReviewerAddedMessageGenerator.class);
 
     private ProjectConfig config;
-    private CommentAddedEvent event;
+    private ReviewerAddedEvent event;
 
     /**
-     * Creates a new CommentAddedMessageGenerator instance using the provided
-     * CommentAddedEvent instance.
+     * Creates a new ReviewerAddedMessageGenerator instance using the provided
+     * ReviewerAddedEvent instance.
      *
-     * @param event The CommentAddedEvent instance to generate a message for.
+     * @param event The ReviewerAddedEvent instance to generate a message for.
      */
-    protected CommentAddedMessageGenerator(CommentAddedEvent event,
-                                           ProjectConfig config)
+    protected ReviewerAddedMessageGenerator(ReviewerAddedEvent event,
+                                            ProjectConfig config)
     {
         if (event == null)
         {
@@ -62,7 +62,7 @@ public class CommentAddedMessageGenerator extends MessageGenerator
     @Override
     public boolean shouldPublish()
     {
-        return config.isEnabled() && config.shouldPublishOnCommentAdded();
+        return config.isEnabled() && config.shouldPublishOnReviewerAdded();
     }
 
     @Override
@@ -80,15 +80,13 @@ public class CommentAddedMessageGenerator extends MessageGenerator
             StringBuilder text;
             text = new StringBuilder();
 
-            text.append(escape(event.author.get().name));
-            text.append(" commented to ");
-            text.append(escape(event.change.get().owner.name));
-            text.append("\\n>>>");
+            text.append(escape(event.reviewer.get().name));
+            text.append(" was added to review\\n>>>");
             text.append(escape(event.change.get().project));
             text.append(" (");
             text.append(escape(event.change.get().branch));
             text.append("): ");
-            text.append(escape(Ascii.truncate(event.comment, 200, "...")));
+            text.append(escape(event.change.get().commitMessage.split("\n")[0]));
             text.append(" (");
             text.append(escape(event.change.get().url));
             text.append(")");

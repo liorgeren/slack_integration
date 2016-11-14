@@ -50,6 +50,7 @@ public class ProjectConfig
     private boolean publishOnPatchSetCreated;
     private boolean publishOnChangeMerged;
     private boolean publishOnCommentAdded;
+    private boolean publishOnReviewerAdded;
 
     /**
      * Creates a new instance of the ProjectConfig class for the given project.
@@ -100,6 +101,11 @@ public class ProjectConfig
                 configFactory.getFromProjectConfigWithInheritance(
                     projectNameKey, CONFIG_NAME).getBoolean(
                     "publish-on-comment-added", true);
+
+            publishOnReviewerAdded =
+                configFactory.getFromProjectConfigWithInheritance(
+                    projectNameKey, CONFIG_NAME).getBoolean(
+                    "publish-on-reviewer-added", true);
         }
         catch (NoSuchProjectException e)
         {
@@ -146,5 +152,10 @@ public class ProjectConfig
     public boolean shouldPublishOnCommentAdded()
     {
         return publishOnCommentAdded;
+    }
+
+    public boolean shouldPublishOnReviewerAdded()
+    {
+        return publishOnReviewerAdded;
     }
 }

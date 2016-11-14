@@ -84,6 +84,8 @@ public class ProjectConfigTest
                 .thenReturn(true);
         when(mockPluginConfig.getBoolean("publish-on-comment-added", true))
                 .thenReturn(true);
+        when(mockPluginConfig.getBoolean("publish-on-reviewer-added", true))
+                .thenReturn(true);
 
         config = new ProjectConfig(mockConfigFactory, PROJECT_NAME);
     }
@@ -128,5 +130,11 @@ public class ProjectConfigTest
     public void testShouldPublishOnCommentAdded() throws Exception
     {
         assertThat(config.shouldPublishOnCommentAdded(), is(equalTo(true)));
+    }
+
+    @Test
+    public void testShouldPublishOnReviewerAdded() throws Exception
+    {
+        assertThat(config.shouldPublishOnReviewerAdded(), is(equalTo(true)));
     }
 }

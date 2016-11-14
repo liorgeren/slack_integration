@@ -28,6 +28,7 @@ import com.google.gerrit.server.events.ChangeMergedEvent;
 import com.google.gerrit.server.events.CommentAddedEvent;
 import com.google.gerrit.server.events.Event;
 import com.google.gerrit.server.events.PatchSetCreatedEvent;
+import com.google.gerrit.server.events.ReviewerAddedEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
@@ -88,6 +89,17 @@ public class PublishEventListener implements EventListener
 
                 messageGenerator = MessageGeneratorFactory.newInstance(
                         commentAddedEvent, config);
+            }
+            else if (event instanceof ReviewerAddedEvent)
+            {
+                ReviewerAddedEvent reviewerAddedEvent;
+                reviewerAddedEvent = (ReviewerAddedEvent) event;
+
+                config = new ProjectConfig(configFactory,
+                        reviewerAddedEvent.change.get().project);
+
+                messageGenerator = MessageGeneratorFactory.newInstance(
+                        reviewerAddedEvent, config);
             }
             else
             {
