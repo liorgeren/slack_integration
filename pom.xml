@@ -64,6 +64,7 @@
                             </Gerrit-ApiVersion>
                         </manifestEntries>
                     </archive>
+                    <finalName>${project.artifactId}</finalName>
                 </configuration>
             </plugin>
 
